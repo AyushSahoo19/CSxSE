@@ -1,0 +1,501 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const PHASES = [
+    {
+      id: 1,
+      slug: "phase-1",
+      label: "Build Foundations",
+      tagline: "Before you write a line of production code, you must understand what a computer is, how to think algorithmically, and how to reason about complexity.",
+      color: "#34d399",
+      categories: ["Fundamentals", "Math & Theory", "Data Structures", "Algorithms"],
+      why: "These four domains are the bedrock of everything. If you skip them, you will hit a ceiling in every other phase. Data structures and algorithms determine whether your code scales or collapses under load. Math builds your ability to reason with precision."
+    },
+    {
+      id: 2,
+      slug: "phase-2",
+      label: "Learn to Think in Systems",
+      tagline: "Learn how software is truly structured — from instruction sets in silicon to the paradigms and patterns your code follows every day.",
+      color: "#60a5fa",
+      categories: ["Programming Languages & Paradigms", "OOP & Design Patterns", "Computer Architecture & Hardware"],
+      why: "A senior engineer sees code as a system, not just lines. This phase teaches you how machines execute instructions, how languages model computation, and how design patterns exist to tame complexity before it spirals out of control."
+    },
+    {
+      id: 3,
+      slug: "phase-3",
+      label: "Go Deep on Internals",
+      tagline: "Understand the invisible layers your code runs on — the kernel, the scheduler, the network stack.",
+      color: "#818cf8",
+      categories: ["Operating Systems", "Networking & Web"],
+      why: "Operating systems manage every resource your program uses. Networking is the backbone of every modern application. You cannot debug production issues, optimize performance, or build reliable systems without understanding these layers."
+    },
+    {
+      id: 4,
+      slug: "phase-4",
+      label: "Work with Data & Services",
+      tagline: "Build real products — APIs, databases, user interfaces, and mobile apps — end to end.",
+      color: "#a78bfa",
+      categories: ["Databases & Storage", "Data Engineering & Big Data", "Backend Engineering", "Frontend Engineering", "Mobile Development"],
+      why: "This is where theory meets production. You'll learn how to persist data reliably, build APIs that don't break, render UIs that users love, and understand how data flows through a modern platform at scale."
+    },
+    {
+      id: 5,
+      slug: "phase-5",
+      label: "Design & Scale",
+      tagline: "Think beyond a single server. Architect systems that handle millions of users, survive failures, and evolve over time.",
+      color: "#f472b6",
+      categories: ["System Design & Architecture", "Distributed Systems", "Cloud & Scalability"],
+      why: "Most engineers never reach this level of thinking. System design separates mid-level from senior engineers. Distributed systems add the hardest problems in CS — consistency, partition tolerance, latency. Cloud fluency is now table stakes for engineering leadership."
+    },
+    {
+      id: 6,
+      slug: "phase-6",
+      label: "Professionalize",
+      tagline: "Ship with discipline. Secure your code, test with rigor, automate your delivery pipeline, and operate at the standards of a professional engineering team.",
+      color: "#fb923c",
+      categories: ["Security", "Cryptography & Web3", "Software Engineering Process", "Testing & QA", "DevOps & Infrastructure", "AI / ML Foundations", "Career & Professional"],
+      why: "Great engineers don't just write features — they build with craft. Security is everyone's responsibility. Testing ensures you can move fast without breaking things. DevOps culture means you own what you ship. And AI literacy is now a core engineering competency."
+    }
+  ];
+
+  const dictionary = await getCollection('dictionary');
+
+  return PHASES.map(phase => ({
+    params: { id: phase.slug },
+    props: { phase, dictionary, allPhases: PHASES }
+  }));
+}
+
+const { phase, dictionary, allPhases } = Astro.props;
+
+const phaseTerms = dictionary
+  .filter(entry => phase.categories.includes(entry.data.category))
+  .sort((a, b) => a.data.term.localeCompare(b.data.term));
+
+const termsByCategory = phase.categories.reduce((acc, cat) => {
+  acc[cat] = phaseTerms.filter(e => e.data.category === cat);
+  return acc;
+}, {} as Record<string, typeof phaseTerms>);
+
+const prevPhase = allPhases.find(p => p.id === phase.id - 1);
+const nextPhase = allPhases.find(p => p.id === phase.id + 1);
+---
+
+<Layout title={`Phase ${phase.id}: ${phase.label}`}>
+  <div class="phase-page">
+    
+    <!-- Left sidebar: domain navigation -->
+    <aside class="phase-sidebar">
+      <div class="sidebar-sticky">
+        <!-- All Phases navigation -->
+        <div class="phases-nav">
+          <div class="nav-label">Mastery Phases</div>
+          {allPhases.map(p => (
+            <a href={`/phases/${p.slug}`}
+               class={`phase-nav-item ${p.id === phase.id ? 'active' : ''}`}
+               style={p.id === phase.id ? `border-left-color: ${phase.color}` : ''}>
+              <span class="pn-num" style={p.id === phase.id ? `color: ${phase.color}` : ''}>
+                {p.id.toString().padStart(2,'0')}
+              </span>
+              <span class="pn-label">{p.label}</span>
+            </a>
+          ))}
+        </div>
+
+        <!-- Domains in this phase -->
+        <div class="domains-nav">
+          <div class="nav-label" style="margin-top: 28px;">In This Phase</div>
+          {phase.categories.map(cat => (
+            <a href={`#${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} class="domain-nav-item">
+              {cat}
+              <span class="dn-count">{termsByCategory[cat].length}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="phase-main">
+
+      <!-- Phase Hero -->
+      <header class="phase-hero" style={`border-left: 3px solid ${phase.color}`}>
+        <div class="phase-eyebrow" style={`color: ${phase.color}`}>
+          Phase {phase.id.toString().padStart(2, '0')} of {allPhases.length}
+        </div>
+        <h1 class="phase-title">{phase.label}</h1>
+        <p class="phase-tagline">{phase.tagline}</p>
+        <div class="phase-meta">
+          <span class="meta-pill">{phase.categories.length} domains</span>
+          <span class="meta-pill">{phaseTerms.length} terms</span>
+        </div>
+      </header>
+
+      <!-- Why this matters -->
+      <section class="why-section">
+        <div class="why-label">Why This Phase Matters</div>
+        <p class="why-text">{phase.why}</p>
+      </section>
+
+      <!-- Terms by category -->
+      {phase.categories.map(cat => (
+        <section class="category-section" id={cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}>
+          <div class="cat-header">
+            <h2 class="cat-title">{cat}</h2>
+            <span class="cat-count">{termsByCategory[cat].length} terms</span>
+            <a href={`/categories/${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} class="cat-link">
+              View domain →
+            </a>
+          </div>
+
+          <div class="terms-grid">
+            {termsByCategory[cat]
+              .sort((a,b) => {
+                const order = ["Foundational","Intermediate","Advanced","Expert"];
+                return order.indexOf(a.data.level) - order.indexOf(b.data.level) || a.data.term.localeCompare(b.data.term);
+              })
+              .map(entry => (
+              <a href={`/dictionary/${entry.id}`} class="term-box">
+                <div class="tb-name">{entry.data.term}</div>
+                <span class="badge" data-level={entry.data.level}>{entry.data.level}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <!-- Phase navigation -->
+      <nav class="phase-nav-footer">
+        {prevPhase ? (
+          <a href={`/phases/${prevPhase.slug}`} class="nav-arrow prev">
+            <span class="arrow-label">← Previous Phase</span>
+            <span class="arrow-title">{prevPhase.label}</span>
+          </a>
+        ) : <div></div>}
+        {nextPhase ? (
+          <a href={`/phases/${nextPhase.slug}`} class="nav-arrow next" style={`border-color: ${nextPhase.color}`}>
+            <span class="arrow-label">Next Phase →</span>
+            <span class="arrow-title" style={`color: ${nextPhase.color}`}>{nextPhase.label}</span>
+          </a>
+        ) : <div></div>}
+      </nav>
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .phase-page {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    align-items: start;
+  }
+
+  /* ── Sidebar ── */
+  .phase-sidebar {
+    border-right: 1px solid var(--border-color);
+    height: calc(100vh - 64px);
+    position: sticky;
+    top: 64px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .sidebar-sticky {
+    padding: 32px 20px 40px;
+  }
+
+  .nav-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-left: 12px;
+  }
+
+  .phases-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .phase-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .phase-nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+  }
+
+  .phase-nav-item.active {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.04);
+    font-weight: 600;
+  }
+
+  .pn-num {
+    font-size: 0.65rem;
+    font-weight: 700;
+    font-family: 'Outfit', monospace;
+    min-width: 20px;
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+
+  .pn-label {
+    line-height: 1.3;
+  }
+
+  .domains-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .domain-nav-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+
+  .domain-nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--text-primary);
+  }
+
+  .dn-count {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-family: 'Outfit', monospace;
+  }
+
+  /* ── Main ── */
+  .phase-main {
+    padding: 48px 48px 100px;
+    max-width: 960px;
+  }
+
+  /* Phase Hero */
+  .phase-hero {
+    padding: 32px 36px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    margin-bottom: 40px;
+  }
+
+  .phase-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-family: 'Outfit', monospace;
+  }
+
+  .phase-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+    line-height: 1.1;
+  }
+
+  .phase-tagline {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 620px;
+    margin-bottom: 20px;
+  }
+
+  .phase-meta {
+    display: flex;
+    gap: 8px;
+  }
+
+  .meta-pill {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-family: 'Outfit', monospace;
+  }
+
+  /* Why Section */
+  .why-section {
+    padding: 24px 28px;
+    border-left: 2px solid var(--border-color);
+    margin-bottom: 56px;
+    background: rgba(255,255,255,0.01);
+  }
+
+  .why-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .why-text {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  /* Category Section */
+  .category-section {
+    margin-bottom: 56px;
+    scroll-margin-top: 80px;
+  }
+
+  .cat-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .cat-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .cat-count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: 'Outfit', monospace;
+  }
+
+  .cat-link {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    transition: opacity 0.15s;
+  }
+
+  .cat-link:hover { opacity: 0.7; }
+
+  /* Terms Grid */
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  .term-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+    min-height: 64px;
+    gap: 8px;
+  }
+
+  .term-box:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    transform: translateY(-1px);
+  }
+
+  .tb-name {
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .badge {
+    align-self: flex-start;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Phase Footer Nav */
+  .phase-nav-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .nav-arrow {
+    padding: 20px 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .nav-arrow:hover {
+    background: rgba(255,255,255,0.04);
+  }
+
+  .nav-arrow.next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .arrow-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Outfit', monospace;
+  }
+
+  .arrow-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 860px) {
+    .phase-page {
+      grid-template-columns: 1fr;
+    }
+    .phase-sidebar {
+      display: none;
+    }
+    .phase-main {
+      padding: 32px 20px 80px;
+    }
+    .phase-title {
+      font-size: 1.8rem;
+    }
+  }
+</style>

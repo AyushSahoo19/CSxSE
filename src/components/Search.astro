@@ -1,0 +1,184 @@
+---
+import { getCollection } from 'astro:content';
+const dictionary = await getCollection('dictionary');
+const searchData = dictionary.map(entry => ({
+  slug: entry.id,
+  term: entry.data.term,
+  category: entry.data.category,
+  level: entry.data.level,
+}));
+---
+
+<div class="search-container">
+	<div class="search-box">
+		<span class="search-icon">🔍</span>
+		<input 
+			type="text" 
+			id="search-input" 
+			placeholder="Search 350+ software engineering terms..." 
+			aria-label="Search dictionary"
+		/>
+	</div>
+	
+	<div id="search-results" class="search-results hidden">
+		<!-- Results will be injected here via JS -->
+	</div>
+</div>
+
+<script id="search-data" type="application/json" set:html={JSON.stringify(searchData)}></script>
+
+<script>
+	const searchInput = document.getElementById('search-input') as HTMLInputElement;
+	const searchResults = document.getElementById('search-results');
+	const dataScript = document.getElementById('search-data');
+	
+	if (searchInput && searchResults && dataScript) {
+		const terms = JSON.parse(dataScript.textContent || '[]');
+		
+		searchInput.addEventListener('input', (e) => {
+			const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+			
+			if (query.length < 2) {
+				searchResults.classList.add('hidden');
+				return;
+			}
+			
+			const results = terms.filter((item: any) => 
+				item.term.toLowerCase().includes(query) || 
+				item.category.toLowerCase().includes(query)
+			).slice(0, 10); // Limit to top 10
+			
+			if (results.length > 0) {
+				searchResults.innerHTML = results.map((item: any) => `
+					<a href="/dictionary/${item.slug}" class="result-item">
+						<div class="result-term">${item.term}</div>
+						<div class="result-meta">
+							<span class="result-badge">${item.level}</span>
+							<span>${item.category}</span>
+						</div>
+					</a>
+				`).join('');
+				searchResults.classList.remove('hidden');
+			} else {
+				searchResults.innerHTML = `
+					<div class="no-results">
+						<p>No terms found for "${query}"</p>
+					</div>
+				`;
+				searchResults.classList.remove('hidden');
+			}
+		});
+
+		// Hide results when clicking outside
+		document.addEventListener('click', (e) => {
+			const target = e.target as HTMLElement;
+			if (!target.closest('.search-container')) {
+				searchResults.classList.add('hidden');
+			}
+		});
+	}
+</script>
+
+<style>
+	.search-container {
+		position: relative;
+		width: 100%;
+		max-width: 600px;
+		margin: 0 auto;
+		z-index: 50;
+	}
+
+	.search-box {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.search-icon {
+		position: absolute;
+		left: 16px;
+		color: var(--text-muted);
+		pointer-events: none;
+	}
+
+	#search-input {
+		width: 100%;
+		padding: 16px 16px 16px 48px;
+		border-radius: 12px;
+		border: 1px solid var(--border-color);
+		background: var(--surface-color);
+		color: var(--text-primary);
+		font-size: 1.1rem;
+		font-family: inherit;
+		transition: all 0.2s ease;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	#search-input:focus {
+		outline: none;
+		border-color: var(--accent-color);
+		box-shadow: 0 0 0 3px var(--accent-glow);
+	}
+
+	.search-results {
+		position: absolute;
+		top: calc(100% + 8px);
+		left: 0;
+		right: 0;
+		background: var(--surface-color);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+		max-height: 400px;
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.search-results.hidden {
+		display: none;
+	}
+
+	.result-item {
+		padding: 16px;
+		border-bottom: 1px solid var(--border-color);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		transition: background 0.2s ease;
+	}
+
+	.result-item:last-child {
+		border-bottom: none;
+	}
+
+	.result-item:hover {
+		background: var(--surface-hover);
+	}
+
+	.result-term {
+		font-weight: 600;
+		font-size: 1.05rem;
+	}
+
+	.result-meta {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		font-size: 0.8rem;
+		color: var(--text-muted);
+	}
+
+	.result-badge {
+		border: 1px solid var(--border-color);
+		padding: 2px 8px;
+		border-radius: 4px;
+		font-weight: 600;
+	}
+
+	.no-results {
+		padding: 24px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+</style>

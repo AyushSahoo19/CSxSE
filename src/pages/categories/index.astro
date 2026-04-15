@@ -1,0 +1,184 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const dictionary = await getCollection('dictionary');
+
+const MASTERY_SEQUENCE = [
+  "Fundamentals",
+  "Math & Theory",
+  "Data Structures",
+  "Algorithms",
+  "Programming Languages & Paradigms",
+  "OOP & Design Patterns",
+  "Computer Architecture & Hardware",
+  "Operating Systems",
+  "Networking & Web",
+  "Databases & Storage",
+  "Data Engineering & Big Data",
+  "Backend Engineering",
+  "Frontend Engineering",
+  "Mobile Development",
+  "System Design & Architecture",
+  "Distributed Systems",
+  "Security",
+  "Cryptography & Web3",
+  "Software Engineering Process",
+  "Testing & QA",
+  "DevOps & Infrastructure",
+  "Cloud & Scalability",
+  "AI / ML Foundations",
+  "Career & Professional"
+];
+
+const allCategories = new Set(dictionary.map((entry) => entry.data.category));
+const categories = [
+  ...MASTERY_SEQUENCE.filter(cat => allCategories.has(cat)),
+  ...[...allCategories].filter(cat => !MASTERY_SEQUENCE.includes(cat)).sort()
+];
+---
+
+<Layout title="Domains">
+	<div class="container page-content">
+		<header class="page-header">
+			<div class="page-eyebrow">The Curriculum Path</div>
+			<h1 class="page-title">All Domains</h1>
+			<p class="page-subtitle">{categories.length} sequential knowledge domains · {dictionary.length} terms total</p>
+		</header>
+
+		<!-- Book Index Style Full List -->
+		<div class="domain-index-table">
+			{categories.map((cat, index) => {
+				const count = dictionary.filter((d) => d.data.category === cat).length;
+				const slug = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+				return (
+					<a href={`/categories/${slug}`} class="domain-index-row">
+						<span class="domain-num">{(index + 1).toString().padStart(2, '0')}</span>
+						<span class="domain-name">{cat}</span>
+						<span class="domain-fill"></span>
+						<span class="domain-term-count">{count} terms</span>
+						<span class="domain-arrow">→</span>
+					</a>
+				);
+			})}
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.page-content {
+		padding: 60px 24px 100px;
+		max-width: 900px;
+	}
+
+	.page-header {
+		margin-bottom: 48px;
+	}
+
+	.page-eyebrow {
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		color: var(--accent-color);
+		margin-bottom: 12px;
+	}
+
+	.page-title {
+		font-size: 3rem;
+		font-weight: 800;
+		margin-bottom: 10px;
+		letter-spacing: -1px;
+	}
+
+	.page-subtitle {
+		font-size: 1rem;
+		color: var(--text-secondary);
+	}
+
+	/* Book-style table of contents */
+	.domain-index-table {
+		display: flex;
+		flex-direction: column;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.domain-index-row {
+		display: grid;
+		grid-template-columns: 36px 1fr auto 60px 20px;
+		align-items: center;
+		gap: 0 12px;
+		padding: 18px 16px;
+		border-bottom: 1px solid rgba(255,255,255,0.05);
+		transition: all 0.15s ease;
+		border-left: 3px solid transparent;
+	}
+
+	.domain-index-row:hover {
+		background: rgba(255,255,255,0.025);
+		border-left-color: var(--accent-color);
+		padding-left: 20px;
+	}
+
+	.domain-index-row:hover .domain-name {
+		color: var(--text-primary);
+	}
+
+	.domain-index-row:hover .domain-num {
+		color: var(--accent-color);
+	}
+
+	.domain-index-row:hover .domain-arrow {
+		opacity: 1;
+		transform: translateX(2px);
+	}
+
+	.domain-num {
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: var(--text-muted);
+		font-family: 'Outfit', monospace;
+		transition: color 0.15s;
+	}
+
+	.domain-name {
+		font-size: 0.95rem;
+		font-weight: 500;
+		color: var(--text-secondary);
+		transition: color 0.15s;
+	}
+
+	.domain-fill {
+		/* spacer */
+	}
+
+	.domain-term-count {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		font-family: 'Outfit', monospace;
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	.domain-arrow {
+		font-size: 0.85rem;
+		color: var(--text-muted);
+		opacity: 0;
+		transition: all 0.15s ease;
+		text-align: right;
+	}
+
+	@media (max-width: 600px) {
+		.page-title {
+			font-size: 2rem;
+		}
+
+		.domain-index-row {
+			grid-template-columns: 28px 1fr auto 14px;
+		}
+
+		.domain-term-count {
+			display: none;
+		}
+	}
+</style>

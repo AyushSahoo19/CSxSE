@@ -1,0 +1,731 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const dictionary = await getCollection('dictionary');
+const totalTerms = dictionary.length;
+
+const MASTERY_SEQUENCE = [
+  "Fundamentals",
+  "Math & Theory",
+  "Data Structures",
+  "Algorithms",
+  "Programming Languages & Paradigms",
+  "OOP & Design Patterns",
+  "Computer Architecture & Hardware",
+  "Operating Systems",
+  "Networking & Web",
+  "Databases & Storage",
+  "Data Engineering & Big Data",
+  "Backend Engineering",
+  "Frontend Engineering",
+  "Mobile Development",
+  "System Design & Architecture",
+  "Distributed Systems",
+  "Security",
+  "Cryptography & Web3",
+  "Software Engineering Process",
+  "Testing & QA",
+  "DevOps & Infrastructure",
+  "Cloud & Scalability",
+  "AI / ML Foundations",
+  "Career & Professional"
+];
+
+const allCategories = new Set(dictionary.map((entry) => entry.data.category));
+
+// Build in strict mastery order — guaranteed sequence, no sort ambiguity
+const categories = [
+  ...MASTERY_SEQUENCE.filter(cat => allCategories.has(cat)),
+  // Append any categories not in the sequence at the end
+  ...[...allCategories].filter(cat => !MASTERY_SEQUENCE.includes(cat)).sort()
+];
+---
+
+<Layout title="Home">
+	<section class="hero">
+		<div class="container hero-content">
+			<div class="badge-pill">Bloom's Taxonomy · Structured Learning Path</div>
+			<h1 class="hero-title">Master the Language of <span class="text-gradient">Computer Science</span></h1>
+			<p class="hero-subtitle">
+				A premium, curated dictionary of {totalTerms}+ essential concepts across {categories.length} domains in software engineering. Designed for deep understanding.
+			</p>
+			<div class="hero-actions">
+				<a href="/dictionary" class="btn btn-primary">Browse Curriculum</a>
+				<a href="/categories" class="btn btn-secondary">Explore Domains</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="index-section container">
+		<div class="index-header">
+			<div class="index-header-left">
+				<h2 class="index-title">Curriculum Index</h2>
+				<p class="index-subtitle">A structured path from first principles to advanced practice</p>
+			</div>
+			<a href="/categories" class="index-link">View all domains →</a>
+		</div>
+
+		<div class="book-index">
+			<div class="index-cols">
+				{categories.map((cat, i) => {
+					const count = dictionary.filter((d) => d.data.category === cat).length;
+					const slug = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+					return (
+						<a href={`/categories/${slug}`} class="index-row">
+							<span class="index-num">{(i + 1).toString().padStart(2, '0')}</span>
+							<span class="index-name">{cat}</span>
+							<span class="index-dots"></span>
+							<span class="index-count">{count}</span>
+						</a>
+					);
+				})}
+			</div>
+		</div>
+	</section>
+
+	<section class="features container">
+		<div class="feature-grid">
+			<div class="feature-card">
+				<div class="feat-num">01</div>
+				<h3>Clear Definitions</h3>
+				<p>Jargon-free explanations that get straight to the point without losing technical accuracy.</p>
+			</div>
+			<div class="feature-card">
+				<div class="feat-num">02</div>
+				<h3>Real-World Examples</h3>
+				<p>Every term includes a practical analogy or real-world usage to anchor your understanding.</p>
+			</div>
+			<div class="feature-card">
+				<div class="feat-num">03</div>
+				<h3>Structured Learning</h3>
+				<p>Categorized by domain and ranked by difficulty — Foundational to Expert — to guide your study path.</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- ── MASTERY ROADMAP ─────────────────────────────── -->
+	<section class="roadmap-section container">
+		<div class="section-header">
+			<div class="eyebrow">Sequence Guidance</div>
+			<h2 class="section-title">How to Achieve Mastery</h2>
+			<p class="section-sub">Follow this guided sequence. Skip ahead at your own risk.</p>
+		</div>
+
+		<div class="roadmap-grid">
+			{[
+				{
+					phase: "Phase 01",
+					label: "Build Foundations",
+					desc: "Start with Fundamentals, Math & Theory, Data Structures, and Algorithms. These are your bedrock — no skipping.",
+					tags: ["Fundamentals", "Math & Theory", "Data Structures", "Algorithms"],
+					color: "#34d399"
+				},
+				{
+					phase: "Phase 02",
+					label: "Learn to Think in Systems",
+					desc: "Study Programming Paradigms, OOP & Design Patterns, and Computer Architecture. Learn how machines and code are structured.",
+					tags: ["OOP & Design Patterns", "Computer Architecture", "Prog. Languages"],
+					color: "#60a5fa"
+				},
+				{
+					phase: "Phase 03",
+					label: "Go Deep on Internals",
+					desc: "Dive into Operating Systems and Networking & Web. Understanding layers beneath your code unlocks everything else.",
+					tags: ["Operating Systems", "Networking & Web"],
+					color: "#818cf8"
+				},
+				{
+					phase: "Phase 04",
+					label: "Work with Data & Services",
+					desc: "Learn Databases, Data Engineering, Backend Engineering, and Frontend Engineering. Build full products end-to-end.",
+					tags: ["Databases", "Backend", "Frontend", "Data Engineering"],
+					color: "#a78bfa"
+				},
+				{
+					phase: "Phase 05",
+					label: "Design & Scale",
+					desc: "Study System Design, Distributed Systems, and Cloud & Scalability. This is how you architect platforms that handle millions.",
+					tags: ["System Design", "Distributed Systems", "Cloud & Scalability"],
+					color: "#f472b6"
+				},
+				{
+					phase: "Phase 06",
+					label: "Professionalize",
+					desc: "Security, Testing & QA, DevOps, and the Software Engineering Process. Ship with quality, ship with confidence.",
+					tags: ["Security", "Testing & QA", "DevOps", "SE Process"],
+					color: "#fb923c"
+				},
+			].map((item, i) => (
+				<a href={`/phases/phase-${i+1}`} class="roadmap-card">
+					<div class="roadmap-phase" style={`color: ${item.color}`}>{item.phase}</div>
+					<h3 class="roadmap-label">{item.label}</h3>
+					<p class="roadmap-desc">{item.desc}</p>
+					<div class="roadmap-tags">
+						{item.tags.map(t => <span class="tag">{t}</span>)}
+					</div>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<!-- ── YOUTUBE CHANNELS ───────────────────────────── -->
+	<section class="resources-section container">
+		<div class="section-header">
+			<div class="eyebrow">Free Resources</div>
+			<h2 class="section-title">Best YouTube Channels</h2>
+			<p class="section-sub">Curated channels that teach CS & SE with depth and clarity.</p>
+		</div>
+
+		<div class="resources-table">
+			{[
+				{ name: "MIT OpenCourseWare", handle: "@mitocw", focus: "Algorithms, Math, Systems", level: "Advanced", url: "https://youtube.com/@mitocw" },
+				{ name: "CS Dojo", handle: "@csdojo", focus: "Python, Data Structures, Interviews", level: "Foundational", url: "https://youtube.com/@csdojo" },
+				{ name: "Fireship", handle: "@fireship", focus: "Web Dev, CS Concepts, Tools", level: "Intermediate", url: "https://youtube.com/@fireship" },
+				{ name: "NeetCode", handle: "@neetcode", focus: "DSA, LeetCode, System Design", level: "Intermediate", url: "https://youtube.com/@neetcode" },
+				{ name: "Reducible", handle: "@reducible", focus: "Algorithms with Visual Depth", level: "Advanced", url: "https://youtube.com/@reducible" },
+				{ name: "ByteByteGo", handle: "@bytebytego", focus: "System Design, Architecture", level: "Advanced", url: "https://youtube.com/@bytebytego" },
+				{ name: "The Primeagen", handle: "@theprimeagen", focus: "Engineering Culture, Performance", level: "Expert", url: "https://youtube.com/@theprimeagen" },
+				{ name: "Traversy Media", handle: "@traversymedia", focus: "Full-Stack Web Development", level: "Foundational", url: "https://youtube.com/@traversymedia" },
+			].map(ch => (
+				<a href={ch.url} target="_blank" rel="noopener noreferrer" class="resource-row">
+					<span class="resource-name">{ch.name}</span>
+					<span class="resource-handle">{ch.handle}</span>
+					<span class="resource-focus">{ch.focus}</span>
+					<span class="badge" data-level={ch.level}>{ch.level}</span>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<!-- ── BEST COURSES ───────────────────────────────── -->
+	<section class="courses-section container">
+		<div class="section-header">
+			<div class="eyebrow">Structured Learning</div>
+			<h2 class="section-title">Best Courses</h2>
+			<p class="section-sub">Hand-picked courses that engineers actually recommend.</p>
+		</div>
+
+		<div class="courses-grid">
+			{[
+				{ title: "CS50x", platform: "Harvard / edX", desc: "The gold standard intro to CS. Covers C, Python, SQL, and web from absolute zero.", level: "Foundational", url: "https://cs50.harvard.edu/x" },
+				{ title: "Algorithms Specialization", platform: "Stanford / Coursera", desc: "Tim Roughgarden's legendary course on sorting, graphs, and NP-completeness.", level: "Advanced", url: "https://www.coursera.org/specializations/algorithms" },
+				{ title: "The Missing Semester", platform: "MIT", desc: "Everything your CS degree didn't teach — shell, git, vim, debugging, and more.", level: "Intermediate", url: "https://missing.csail.mit.edu" },
+				{ title: "System Design Interview", platform: "ByteByteGo", desc: "Alex Xu's comprehensive visual guide to designing large-scale distributed systems.", level: "Advanced", url: "https://bytebytego.com" },
+				{ title: "Full Stack Open", platform: "University of Helsinki", desc: "Modern full-stack web development with React, Node, GraphQL, TypeScript.", level: "Intermediate", url: "https://fullstackopen.com" },
+				{ title: "Operating Systems: Three Easy Pieces", platform: "OSTEP (Free Book)", desc: "The definitive free textbook for OS concepts: virtualization, concurrency, persistence.", level: "Advanced", url: "https://ostep.org" },
+			].map((course, i) => (
+				<a href={course.url} target="_blank" rel="noopener noreferrer" class="course-card">
+					<div class="course-num">{(i + 1).toString().padStart(2, '0')}</div>
+					<div class="course-body">
+						<div class="course-top">
+							<h3 class="course-title">{course.title}</h3>
+							<span class="badge" data-level={course.level}>{course.level}</span>
+						</div>
+						<div class="course-platform">{course.platform}</div>
+						<p class="course-desc">{course.desc}</p>
+					</div>
+				</a>
+			))}
+		</div>
+	</section>
+</Layout>
+
+<style>
+	.hero {
+		padding: 100px 0 80px;
+		text-align: center;
+		position: relative;
+	}
+
+	.hero::before {
+		content: '';
+		position: absolute;
+		top: -50%;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 100%;
+		max-width: 800px;
+		height: 100%;
+		background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+		z-index: -1;
+		opacity: 0.4;
+	}
+
+	.hero-content {
+		max-width: 800px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 24px;
+	}
+
+	.badge-pill {
+		background: rgba(59, 130, 246, 0.08);
+		color: var(--accent-color);
+		padding: 6px 16px;
+		border-radius: 999px;
+		font-weight: 500;
+		font-size: 0.8rem;
+		border: 1px solid rgba(59, 130, 246, 0.2);
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+	}
+
+	.hero-title {
+		font-size: 4rem;
+		letter-spacing: -2px;
+		line-height: 1.1;
+	}
+
+	.text-gradient {
+		background: linear-gradient(to right, #60a5fa, #a78bfa);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	.hero-subtitle {
+		font-size: 1.1rem;
+		color: var(--text-secondary);
+		max-width: 560px;
+		line-height: 1.7;
+	}
+
+	.hero-actions {
+		display: flex;
+		gap: 12px;
+		margin-top: 8px;
+	}
+
+	.btn {
+		padding: 11px 24px;
+		border-radius: 6px;
+		font-weight: 600;
+		font-size: 0.9rem;
+		transition: all 0.2s ease;
+		display: inline-block;
+	}
+
+	.btn-primary {
+		background: var(--text-primary);
+		color: var(--bg-color);
+	}
+
+	.btn-primary:hover {
+		background: #e4e4e7;
+		transform: translateY(-1px);
+	}
+
+	.btn-secondary {
+		background: transparent;
+		border: 1px solid var(--border-color);
+		color: var(--text-secondary);
+	}
+
+	.btn-secondary:hover {
+		background: var(--surface-hover);
+		color: var(--text-primary);
+		transform: translateY(-1px);
+	}
+
+	/* Book Index Section */
+	.index-section {
+		padding: 80px 24px;
+	}
+
+	.index-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		margin-bottom: 40px;
+		padding-bottom: 20px;
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.index-title {
+		font-size: 1.75rem;
+		font-weight: 700;
+		margin-bottom: 6px;
+	}
+
+	.index-subtitle {
+		font-size: 0.9rem;
+		color: var(--text-secondary);
+	}
+
+	.index-link {
+		font-size: 0.85rem;
+		color: var(--accent-color);
+		transition: opacity 0.2s;
+		white-space: nowrap;
+	}
+
+	.index-link:hover {
+		opacity: 0.7;
+	}
+
+	/* Two-column book index layout */
+	.index-cols {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 60px;
+	}
+
+	.index-row {
+		display: grid;
+		grid-template-columns: 28px 1fr auto 36px;
+		align-items: baseline;
+		gap: 4px;
+		padding: 10px 0;
+		border-bottom: 1px solid rgba(255,255,255,0.04);
+		transition: all 0.15s ease;
+		cursor: pointer;
+	}
+
+	.index-row:hover .index-name {
+		color: var(--text-primary);
+	}
+
+	.index-row:hover .index-num {
+		color: var(--accent-color);
+	}
+
+	.index-num {
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: var(--text-muted);
+		font-family: 'Outfit', monospace;
+		transition: color 0.15s;
+	}
+
+	.index-name {
+		font-size: 0.9rem;
+		color: var(--text-secondary);
+		font-weight: 500;
+		transition: color 0.15s;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.index-dots {
+		flex: 1;
+		height: 1px;
+		border-bottom: 1px dotted rgba(255,255,255,0.12);
+		margin: 0 8px;
+		align-self: center;
+	}
+
+	.index-count {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		font-weight: 500;
+		font-family: 'Outfit', monospace;
+		text-align: right;
+	}
+
+	/* Features Section */
+	.features {
+		padding: 40px 24px 100px;
+	}
+
+	.feature-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1px;
+		background: var(--border-color);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.feature-card {
+		padding: 36px 28px;
+		background: var(--bg-color);
+		transition: background 0.2s;
+	}
+
+	.feature-card:hover {
+		background: rgba(255, 255, 255, 0.02);
+	}
+
+	.feat-num {
+		font-size: 2rem;
+		font-weight: 800;
+		color: rgba(255,255,255,0.08);
+		font-family: 'Outfit', sans-serif;
+		margin-bottom: 16px;
+	}
+
+	.feature-card h3 {
+		margin-bottom: 10px;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.feature-card p {
+		color: var(--text-secondary);
+		font-size: 0.875rem;
+		line-height: 1.65;
+	}
+
+	@media (max-width: 900px) {
+		.index-cols {
+			grid-template-columns: 1fr;
+		}
+		.feature-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.hero-title {
+			font-size: 2.5rem;
+			letter-spacing: -1px;
+		}
+		.hero-actions {
+			flex-direction: column;
+			width: 100%;
+			max-width: 280px;
+		}
+		.index-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 12px;
+		}
+	}
+
+	/* ── Shared Section Header ── */
+	.section-header {
+		margin-bottom: 40px;
+	}
+
+	.eyebrow {
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 2.5px;
+		color: var(--accent-color);
+		margin-bottom: 10px;
+	}
+
+	.section-title {
+		font-size: 2rem;
+		font-weight: 800;
+		letter-spacing: -0.5px;
+		margin-bottom: 8px;
+	}
+
+	.section-sub {
+		font-size: 0.95rem;
+		color: var(--text-secondary);
+	}
+
+	/* ── Mastery Roadmap ── */
+	.roadmap-section {
+		padding: 80px 24px;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.roadmap-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1px;
+		background: var(--border-color);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.roadmap-card {
+		padding: 28px 24px;
+		background: var(--bg-color);
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		transition: background 0.2s, border-color 0.2s;
+		cursor: pointer;
+		border-left: 3px solid transparent;
+		text-decoration: none;
+	}
+
+	.roadmap-card:hover {
+		background: rgba(255,255,255,0.03);
+		border-left-color: currentColor;
+	}
+
+	.roadmap-phase {
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-family: 'Outfit', monospace;
+	}
+
+	.roadmap-label {
+		font-size: 1rem;
+		font-weight: 700;
+		color: var(--text-primary);
+		line-height: 1.3;
+	}
+
+	.roadmap-desc {
+		font-size: 0.83rem;
+		color: var(--text-secondary);
+		line-height: 1.65;
+		flex: 1;
+	}
+
+	.roadmap-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-top: 4px;
+	}
+
+	.tag {
+		font-size: 0.65rem;
+		padding: 2px 8px;
+		border-radius: 4px;
+		background: rgba(255,255,255,0.05);
+		color: var(--text-muted);
+		border: 1px solid rgba(255,255,255,0.08);
+		font-family: 'Outfit', monospace;
+	}
+
+	/* ── YouTube Resources Table ── */
+	.resources-section {
+		padding: 80px 24px;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.resources-table {
+		display: flex;
+		flex-direction: column;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.resource-row {
+		display: grid;
+		grid-template-columns: 200px 140px 1fr auto;
+		align-items: center;
+		gap: 16px;
+		padding: 16px 12px;
+		border-bottom: 1px solid rgba(255,255,255,0.04);
+		transition: all 0.15s ease;
+		border-left: 3px solid transparent;
+	}
+
+	.resource-row:hover {
+		background: rgba(255,255,255,0.025);
+		border-left-color: var(--accent-color);
+		padding-left: 16px;
+	}
+
+	.resource-name {
+		font-weight: 600;
+		font-size: 0.9rem;
+		color: var(--text-primary);
+	}
+
+	.resource-handle {
+		font-size: 0.8rem;
+		color: var(--accent-color);
+		font-family: 'Outfit', monospace;
+	}
+
+	.resource-focus {
+		font-size: 0.82rem;
+		color: var(--text-secondary);
+	}
+
+	/* ── Courses Grid ── */
+	.courses-section {
+		padding: 80px 24px 100px;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.courses-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1px;
+		background: var(--border-color);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.course-card {
+		padding: 24px;
+		background: var(--bg-color);
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+		transition: background 0.2s;
+		border-left: 3px solid transparent;
+	}
+
+	.course-card:hover {
+		background: rgba(255,255,255,0.025);
+		border-left-color: #818cf8;
+	}
+
+	.course-num {
+		font-size: 1.5rem;
+		font-weight: 900;
+		color: rgba(255,255,255,0.07);
+		font-family: 'Outfit', sans-serif;
+		line-height: 1;
+		min-width: 32px;
+		padding-top: 2px;
+	}
+
+	.course-body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.course-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.course-title {
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: var(--text-primary);
+	}
+
+	.course-platform {
+		font-size: 0.72rem;
+		color: var(--accent-color);
+		font-family: 'Outfit', monospace;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.course-desc {
+		font-size: 0.82rem;
+		color: var(--text-secondary);
+		line-height: 1.6;
+	}
+
+	@media (max-width: 900px) {
+		.roadmap-grid,
+		.courses-grid {
+			grid-template-columns: 1fr;
+		}
+		.resource-row {
+			grid-template-columns: 1fr auto;
+		}
+		.resource-handle,
+		.resource-focus {
+			display: none;
+		}
+	}
+
+</style>

@@ -1,0 +1,201 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = "A curated dictionary for Computer Science and Software Engineering concepts." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | CS & SE Dictionary</title>
+		<ClientRouter />
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="container header-content">
+				<a href="/" class="logo">
+					<span class="logo-badge">[ <span class="logo-caret">&gt;</span> ]</span>
+					<span class="logo-wordmark">
+						<span class="logo-cs">CS</span><span class="logo-x">x</span><span class="logo-se">SE</span>
+						<span class="logo-dict">Dictionary</span>
+					</span>
+				</a>
+				<nav class="nav-links">
+					<a href="/">Home</a>
+					<a href="/phases/phase-1">Phases</a>
+					<a href="/dictionary">Curriculum</a>
+					<a href="/categories">Domains</a>
+				</nav>
+			</div>
+		</header>
+		<main>
+			<slot />
+		</main>
+		<footer class="site-footer">
+			<div class="container footer-content">
+				<p>CS/SE Dictionary — Comprehensive Software Engineering Path</p>
+				<p class="built-with">Built with Astro</p>
+			</div>
+		</footer>
+	</body>
+</html>
+
+<style>
+	.site-header {
+		border-bottom: 1px solid var(--border-color);
+		background: rgba(9, 9, 11, 0.85);
+		backdrop-filter: blur(12px);
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.header-content {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 64px;
+	}
+
+	.logo {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-family: 'Inter', sans-serif;
+		line-height: 1;
+		text-decoration: none;
+	}
+
+	.logo-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(99, 102, 241, 0.5);
+		border-radius: 6px;
+		padding: 4px 8px;
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: rgba(165, 180, 252, 0.8);
+		letter-spacing: 2px;
+		font-family: 'Outfit', monospace;
+		background: rgba(99, 102, 241, 0.06);
+		box-shadow: 0 0 10px rgba(99, 102, 241, 0.15),
+		            inset 0 0 8px rgba(99, 102, 241, 0.05);
+		transition: box-shadow 0.3s ease;
+	}
+
+	.logo:hover .logo-badge {
+		box-shadow: 0 0 18px rgba(99, 102, 241, 0.35),
+		            inset 0 0 10px rgba(99, 102, 241, 0.1);
+		border-color: rgba(99, 102, 241, 0.8);
+	}
+
+	.logo-caret {
+		color: #818cf8;
+		font-weight: 800;
+		font-size: 0.85rem;
+	}
+
+	.logo-wordmark {
+		display: flex;
+		align-items: baseline;
+		gap: 5px;
+	}
+
+	.logo-cs {
+		font-weight: 900;
+		font-size: 1.05rem;
+		letter-spacing: -0.5px;
+		background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.logo-x {
+		font-weight: 300;
+		color: rgba(99, 102, 241, 0.6);
+		font-size: 0.75rem;
+		font-family: 'Outfit', monospace;
+	}
+
+	.logo-se {
+		font-weight: 900;
+		font-size: 1.05rem;
+		letter-spacing: -0.5px;
+		background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.logo-dict {
+		font-weight: 400;
+		color: var(--text-muted);
+		font-size: 0.82rem;
+		letter-spacing: 0.5px;
+		padding-left: 2px;
+	}
+
+	.nav-links {
+		display: flex;
+		gap: 24px;
+	}
+
+	.nav-links a {
+		color: var(--text-secondary);
+		font-weight: 500;
+		font-size: 0.95rem;
+	}
+
+	.nav-links a:hover {
+		color: var(--text-primary);
+	}
+
+	main {
+		min-height: calc(100vh - 70px - 100px);
+	}
+
+	.site-footer {
+		border-top: 1px solid var(--border-color);
+		padding: 40px 0;
+		margin-top: 60px;
+		color: var(--text-muted);
+		font-size: 0.875rem;
+	}
+
+	.footer-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.built-with {
+		opacity: 0.7;
+	}
+	
+	@media (max-width: 600px) {
+		.header-content {
+			flex-direction: column;
+			gap: 16px;
+			height: auto;
+			padding: 16px 24px;
+		}
+		.footer-content {
+			flex-direction: column;
+			gap: 12px;
+			text-align: center;
+		}
+	}
+</style>

@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const dictionary = await getCollection('dictionary');
+  const categories = [...new Set(dictionary.map((entry) => entry.data.category))];
+  
+  return categories.map((category) => {
+    const slug = category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const terms = dictionary.filter((entry) => entry.data.category === category)
+      .sort((a, b) => a.data.term.localeCompare(b.data.term));
+      
+    return {
+      params: { slug },
+      props: { category, terms },
+    };
+  });
+}
+
+const { category, terms } = Astro.props;
+---
+
+<Layout title={`${category} Terms`} description={`Software engineering concepts in ${category}.`}>
+	<div class="container page-content">
+		<a href="/categories" class="back-link">← All Categories</a>
+		
+		<header class="category-header">
+			<h1 class="page-title">{category}</h1>
+			<p class="page-subtitle">{terms.length} concepts in this domain.</p>
+		</header>
+
+		<div class="terms-grid">
+			{terms.map((entry) => (
+				<a href={`/dictionary/${entry.id}`} class="term-card card">
+					<div class="term-header">
+						<h3 class="term-title">{entry.data.term}</h3>
+						<span class="badge" data-level={entry.data.level}>{entry.data.level}</span>
+					</div>
+					<p class="term-preview">{entry.body.split('\n\n')[0].substring(0, 100)}...</p>
+				</a>
+			))}
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.page-content {
+		padding: 40px 24px 80px;
+	}
+
+	.back-link {
+		color: var(--text-muted);
+		font-size: 0.95rem;
+		display: inline-block;
+		margin-bottom: 32px;
+	}
+
+	.back-link:hover {
+		color: var(--text-primary);
+	}
+
+	.category-header {
+		margin-bottom: 48px;
+		border-bottom: 1px solid var(--border-color);
+		padding-bottom: 24px;
+	}
+
+	.page-title {
+		font-size: 3.5rem;
+		margin-bottom: 8px;
+		color: var(--accent-color);
+	}
+
+	.page-subtitle {
+		font-size: 1.1rem;
+		color: var(--text-secondary);
+	}
+
+	.terms-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 24px;
+	}
+
+	.term-card {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 24px;
+	}
+
+	.term-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 12px;
+	}
+
+	.term-title {
+		font-size: 1.25rem;
+		font-family: 'Inter', sans-serif;
+	}
+
+	.term-preview {
+		font-size: 0.9rem;
+		color: var(--text-muted);
+		line-height: 1.5;
+	}
+</style>

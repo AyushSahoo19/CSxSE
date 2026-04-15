@@ -1,0 +1,391 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Search from '../../components/Search.astro';
+import { getCollection } from 'astro:content';
+
+const dictionary = await getCollection('dictionary');
+const sortedTerms = dictionary.sort((a, b) => a.data.term.localeCompare(b.data.term));
+
+const groupedTerms = sortedTerms.reduce((acc, current) => {
+  const firstLetter = current.data.term.charAt(0).toUpperCase();
+  if (!acc[firstLetter]) acc[firstLetter] = [];
+  acc[firstLetter].push(current);
+  return acc;
+}, {} as Record<string, typeof sortedTerms>);
+
+const MASTERY_SEQUENCE = [
+  "Fundamentals",
+  "Math & Theory",
+  "Data Structures",
+  "Algorithms",
+  "Programming Languages & Paradigms",
+  "OOP & Design Patterns",
+  "Computer Architecture & Hardware",
+  "Operating Systems",
+  "Networking & Web",
+  "Databases & Storage",
+  "Data Engineering & Big Data",
+  "Backend Engineering",
+  "Frontend Engineering",
+  "Mobile Development",
+  "System Design & Architecture",
+  "Distributed Systems",
+  "Security",
+  "Cryptography & Web3",
+  "Software Engineering Process",
+  "Testing & QA",
+  "DevOps & Infrastructure",
+  "Cloud & Scalability",
+  "AI / ML Foundations",
+  "Career & Professional"
+];
+
+const letters = Object.keys(groupedTerms).sort();
+const allCategories = new Set(dictionary.map((entry) => entry.data.category));
+const categories = [
+  ...MASTERY_SEQUENCE.filter(cat => allCategories.has(cat)),
+  ...[...allCategories].filter(cat => !MASTERY_SEQUENCE.includes(cat)).sort()
+];
+---
+
+<Layout title="Dictionary">
+	<div class="container page-content">
+		<div class="layout-grid">
+			<!-- Sidebar for Categories -->
+			<aside class="sidebar">
+				<h3 class="sidebar-title">Mastery Path</h3>
+				<div class="category-filter" id="category-filter">
+					<button class="filter-btn active" data-category="all">00 / All Domains</button>
+					{categories.map((cat, index) => (
+						<button class="filter-btn" data-category={cat}>
+							{(index + 1).toString().padStart(2, '0')} / {cat}
+						</button>
+					))}
+				</div>
+			</aside>
+
+			<!-- Main Dictionary Content -->
+			<div class="main-content">
+				<header class="page-header">
+					<h1 class="page-title">Dictionary Index</h1>
+					<p class="page-subtitle">A-Z glossary of {sortedTerms.length} terms across {categories.length} domains.</p>
+				</header>
+
+				<div class="search-section">
+					<Search />
+				</div>
+
+				<div class="alphabet-nav">
+					{letters.map((letter) => (
+						<a href={`#letter-${letter}`} class="letter-link" data-letter-link={letter}>{letter}</a>
+					))}
+				</div>
+
+				<div class="dictionary-list" id="dictionary-list">
+					{letters.map((letter) => (
+						<section id={`letter-${letter}`} class="letter-section" data-letter-section={letter}>
+							<h2 class="letter-heading">{letter}</h2>
+							<div class="terms-grid">
+								{groupedTerms[letter].map((entry) => (
+									<a href={`/dictionary/${entry.id}`} class="term-box" data-term-category={entry.data.category}>
+										<div class="term-name">{entry.data.term}</div>
+										<div class="term-meta">
+											<span class="badge" data-level={entry.data.level}>{entry.data.level}</span>
+											<span class="term-category">{entry.data.category}</span>
+										</div>
+									</a>
+								))}
+							</div>
+						</section>
+					))}
+				</div>
+				
+				<div id="no-results-msg" class="hidden no-results">
+					<p>No terms found in this category.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	document.addEventListener('astro:page-load', () => {
+		const filterBtns = document.querySelectorAll('.filter-btn');
+		const termRows = document.querySelectorAll('.term-box');
+		const letterSections = document.querySelectorAll('.letter-section');
+		const letterLinks = document.querySelectorAll('.letter-link');
+		const noResultsMsg = document.getElementById('no-results-msg');
+
+		filterBtns.forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				const target = e.currentTarget as HTMLElement;
+				const selectedCategory = target.getAttribute('data-category');
+
+				filterBtns.forEach(b => b.classList.remove('active'));
+				target.classList.add('active');
+
+				let totalVisible = 0;
+
+				termRows.forEach(row => {
+					const rowEl = row as HTMLElement;
+					const rowCategory = rowEl.getAttribute('data-term-category');
+					
+					if (selectedCategory === 'all' || rowCategory === selectedCategory) {
+						rowEl.style.display = 'flex';
+						totalVisible++;
+					} else {
+						rowEl.style.display = 'none';
+					}
+				});
+
+				letterSections.forEach(section => {
+					const sectionEl = section as HTMLElement;
+					const letter = sectionEl.getAttribute('data-letter-section');
+					const visibleRowsInSection = sectionEl.querySelectorAll('.term-box[style="display: flex;"], .term-box:not([style*="display: none"])').length;
+					
+					const navLink = document.querySelector(`.letter-link[data-letter-link="${letter}"]`) as HTMLElement;
+
+					if (visibleRowsInSection === 0) {
+						sectionEl.style.display = 'none';
+						if (navLink) { navLink.style.opacity = '0.3'; navLink.style.pointerEvents = 'none'; }
+					} else {
+						sectionEl.style.display = 'block';
+						if (navLink) { navLink.style.opacity = '1'; navLink.style.pointerEvents = 'auto'; }
+					}
+				});
+
+				if (noResultsMsg) {
+					if (totalVisible === 0) noResultsMsg.classList.remove('hidden');
+					else noResultsMsg.classList.add('hidden');
+				}
+			});
+		});
+	});
+</script>
+
+<style>
+	.page-content {
+		padding: 0 24px;
+	}
+
+	.page-header {
+		margin-bottom: 40px;
+	}
+
+	.page-title {
+		font-size: 2.5rem;
+		margin-bottom: 8px;
+	}
+
+	.page-subtitle {
+		font-size: 1rem;
+		color: var(--text-secondary);
+	}
+
+	.layout-grid {
+		display: grid;
+		grid-template-columns: 240px 1fr;
+		gap: 40px;
+		align-items: start;
+	}
+
+	/* Sidebar Minimalist Style */
+	.sidebar {
+		position: sticky;
+		top: 70px; /* Accounts for global header */
+		height: calc(100vh - 70px);
+		border-right: 1px solid var(--border-color);
+		padding-right: 24px;
+		padding-top: 40px;
+		padding-bottom: 40px;
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+		scrollbar-width: thin;
+	}
+
+	.sidebar-title {
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		color: var(--text-muted);
+		margin-bottom: 16px;
+		padding-left: 12px;
+	}
+
+	.category-filter {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.filter-btn {
+		background: transparent;
+		border: none;
+		color: var(--text-secondary);
+		padding: 8px 12px;
+		border-radius: 6px;
+		font-size: 0.85rem;
+		text-align: left;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-family: inherit;
+		width: 100%;
+	}
+
+	.filter-btn:hover {
+		background: rgba(255, 255, 255, 0.05);
+		color: var(--text-primary);
+	}
+
+	.filter-btn.active {
+		background: rgba(59, 130, 246, 0.1);
+		color: var(--accent-color);
+		font-weight: 600;
+	}
+
+	/* Main Content Area */
+	.main-content {
+		padding-top: 40px;
+		padding-bottom: 80px;
+		min-width: 0;
+	}
+
+	.search-section {
+		margin-bottom: 32px;
+	}
+
+	.alphabet-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-bottom: 40px;
+		padding: 12px;
+		background: rgba(24, 24, 27, 0.6);
+		backdrop-filter: blur(8px);
+		border: 1px solid var(--border-color);
+		border-radius: 8px;
+		position: sticky;
+		top: 80px;
+		z-index: 10;
+	}
+
+	.letter-link {
+		width: 26px;
+		height: 26px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		font-weight: 600;
+		font-size: 0.8rem;
+		color: var(--text-secondary);
+		background: rgba(255, 255, 255, 0.03);
+		transition: all 0.2s ease;
+	}
+
+	.letter-link:hover {
+		background: var(--surface-hover);
+		color: var(--accent-color);
+	}
+
+	.letter-section {
+		margin-bottom: 40px;
+		scroll-margin-top: 140px; 
+	}
+
+	.letter-heading {
+		font-size: 1.25rem;
+		color: var(--text-secondary);
+		border-bottom: 1px solid var(--border-color);
+		padding-bottom: 6px;
+		margin-bottom: 16px;
+		font-weight: 600;
+	}
+
+	/* New Tabular/Columnar Grid Style */
+	.terms-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: 8px;
+	}
+
+	.term-box {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		padding: 12px;
+		background: rgba(255, 255, 255, 0.02);
+		border-radius: 6px;
+		border: 1px solid transparent;
+		transition: all 0.15s ease;
+		cursor: pointer;
+		min-height: 70px;
+	}
+
+	.term-box:hover {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
+		transform: translateY(-1px);
+	}
+
+	.term-name {
+		font-weight: 600;
+		font-size: 0.85rem;
+		color: var(--text-primary);
+		line-height: 1.3;
+		margin-bottom: 8px;
+	}
+
+	.term-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+
+	.term-category {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 60%;
+		text-align: right;
+	}
+
+	.term-meta .badge {
+		font-size: 0.6rem;
+		padding: 2px 6px;
+	}
+
+	.no-results {
+		text-align: center;
+		padding: 40px;
+		color: var(--text-muted);
+		font-size: 1rem;
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
+	@media (max-width: 860px) {
+		.layout-grid {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+		.sidebar {
+			position: static;
+			height: auto;
+			max-height: 250px;
+			border-right: none;
+			padding: 12px;
+			background: rgba(255, 255, 255, 0.02);
+			border: 1px solid var(--border-color);
+			border-radius: 8px;
+		}
+		.main-content {
+			padding-top: 0;
+		}
+	}
+</style>
