@@ -1,11 +1,11 @@
 ---
 term: "SQL (Structured Query Language)"
-category: "Databases & Storage"
+category: "Programming Languages & Paradigms"
 level: "Foundational"
 ---
 
-The standard language for interacting with relational databases. SELECT to query, INSERT to add, UPDATE to modify, DELETE to remove.
+A domain-specific language used for managing data held in a relational database management system (RDBMS). It is essential for data persistence.
 
-### Example
+### Application & Where to Use
 
-SELECT name, email FROM users WHERE age > 18 ORDER BY name; — reads like English: 'get names and emails of adults, sorted alphabetically'.
+Querying a database to fetch 'all users who purchased a subscription in the last 30 days' for a marketing report.

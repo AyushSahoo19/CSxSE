@@ -1,11 +1,11 @@
 ---
 term: "TypeScript"
-category: "Frontend Engineering"
+category: "Programming Languages & Paradigms"
 level: "Intermediate"
 ---
 
-A superset of JavaScript that adds static type checking. Catches type errors at compile time, improves IDE support and documentation.
+A superset of JavaScript developed by Microsoft that adds static typing. It helps developers catch errors at compile-time rather than runtime in large-scale web apps.
 
-### Example
+### Application & Where to Use
 
-function greet(name: string): string { return 'Hello ' + name; } — calling greet(42) is a compile-time error. Without TS, it would silently produce 'Hello 42'.
+Developing a massive web application like VS Code or Slack, where strong typing prevents breaking changes in a codebase with thousands of contributors.
