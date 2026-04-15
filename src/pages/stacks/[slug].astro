@@ -1,0 +1,280 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { TECH_STACKS } from '../../data/stacks';
+
+export async function getStaticPaths() {
+  return TECH_STACKS.map(stack => ({
+    params: { slug: stack.slug },
+    props: { stack }
+  }));
+}
+
+const { stack } = Astro.props;
+---
+
+<Layout title={`${stack.name} | Architectures`}>
+  <div class="stack-page">
+    <div class="container">
+      <header class="stack-header" style={`border-left-color: ${stack.color}`}>
+        <div class="stack-eyebrow" style={`color: ${stack.color}`}>Technical Blueprint {stack.id}</div>
+        <h1 class="stack-title">{stack.name}</h1>
+        <p class="stack-tagline">{stack.title}</p>
+        
+        <div class="stack-tags">
+          {stack.tools.map(tool => (
+            <span class="tool-pill">{tool}</span>
+          ))}
+        </div>
+      </header>
+
+      <div class="stack-content-grid">
+        <div class="stack-main">
+          <section class="stack-section">
+            <h2>Overview</h2>
+            <p class="large-text">{stack.description}</p>
+          </section>
+
+          <section class="stack-section">
+            <h2>Why This Architecture?</h2>
+            <div class="use-case-box">
+              <div class="uc-item">
+                <label>Target Applications</label>
+                <p>{stack.useCase}</p>
+              </div>
+              <div class="uc-item">
+                <label>Decision Trigger</label>
+                <p>{stack.when}</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="stack-section">
+            <h2>The Learning Path</h2>
+            <ul class="learning-list">
+              {stack.learningPath.map(step => (
+                <li>
+                  <span class="bullet" style={`background: ${stack.color}`}></span>
+                  {step}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        <aside class="stack-sidebar">
+          <div class="sidebar-box">
+            <h3>Core Tools</h3>
+            <div class="tools-list">
+              {stack.tools.map(tool => (
+                <div class="tool-item">
+                  <span class="tool-dot" style={`background: ${stack.color}`}></span>
+                  {tool}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div class="sidebar-box promo">
+            <h3>Need Help?</h3>
+            <p>Ready to build with this stack? Check our discord for architecture reviews.</p>
+            <a href="/" class="btn-link">Learn More →</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .stack-page {
+    padding: 60px 0 100px;
+  }
+
+  .stack-header {
+    margin-bottom: 60px;
+    padding: 32px 40px;
+    background: rgba(255,255,255,0.02);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 4px 12px 12px 4px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+  }
+
+  .stack-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-family: 'Outfit', monospace;
+  }
+
+  .stack-title {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+
+  .stack-tagline {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tool-pill {
+    font-size: 0.75rem;
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    color: var(--text-primary);
+    font-family: 'Outfit', monospace;
+  }
+
+  .stack-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .stack-section {
+    margin-bottom: 56px;
+  }
+
+  .stack-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .large-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  .use-case-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    background: rgba(255,255,255,0.01);
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+  }
+
+  .uc-item label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: block;
+    letter-spacing: 1px;
+  }
+
+  .uc-item p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .learning-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .learning-list li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+  }
+
+  .bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .stack-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .sidebar-box {
+    padding: 24px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+  }
+
+  .sidebar-box h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .tools-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tool-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .tool-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+  }
+
+  .promo p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .btn-link {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .stack-content-grid {
+      grid-template-columns: 1fr;
+    }
+    .use-case-box {
+      grid-template-columns: 1fr;
+    }
+    .stack-title {
+      font-size: 2.2rem;
+    }
+  }
+</style>

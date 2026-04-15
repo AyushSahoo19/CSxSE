@@ -41,40 +41,7 @@ const categories = [
   ...[...allCategories].filter(cat => !MASTERY_SEQUENCE.includes(cat)).sort()
 ];
 
-const TECH_STACKS = [
-	{
-		title: "Modern Full-Stack Web",
-		name: "The T3 Stack",
-		tools: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
-		useCase: "Data-heavy SaaS, high-performance dashboards, and content-rich platforms.",
-		when: "When you need type-safety from DB to UI and the fastest possible iteration speed.",
-		color: "#0ea5e9"
-	},
-	{
-		title: "Real-time & High-Scale",
-		name: "The Distributed Core",
-		tools: ["Go / Elixir", "Redis", "Kafka", "gRPC", "Kubernetes"],
-		useCase: "Chat applications, live stock tickers, and high-throughput microservices.",
-		when: "When low-latency, concurrent connections, and extreme horizontal scale are the priority.",
-		color: "#10b981"
-	},
-	{
-		title: "AI & Data Engineering",
-		name: "The Intelligence Engine",
-		tools: ["Python", "PyTorch / TensorFlow", "FastAPI", "Snowflake", "Ray"],
-		useCase: "Large Language Model (LLM) apps, computer vision, and predictive analytics.",
-		when: "When your product relies on complex mathematical computing and massive data processing.",
-		color: "#8b5cf6"
-	},
-	{
-		title: "Enterprise Systems",
-		name: "The Mission Critical",
-		tools: ["Java (Spring Boot)", "Hibernate", "Oracle DB", "Azure/AWS", "RabbitMQ"],
-		useCase: "Banking systems, healthcare records, and global logistics ERPs.",
-		when: "When reliability, observability, and long-term maintainability for large teams are paramount.",
-		color: "#f43f5e"
-	}
-];
+import { TECH_STACKS } from '../data/stacks';
 ---
 
 <Layout title="Home">
@@ -214,12 +181,12 @@ const TECH_STACKS = [
 
 		<div class="stacks-grid">
 			{TECH_STACKS.map((stack, i) => (
-				<div class="stack-card" style={`--stack-color: ${stack.color}`}>
+				<a href={`/stacks/${stack.slug}`} class="stack-card" style={`--stack-color: ${stack.color}`}>
 					<div class="stack-num">{(i + 1).toString().padStart(2, '0')}</div>
 					<div class="stack-body">
 						<div class="stack-top">
 							<div class="stack-header-left">
-								<span class="stack-cat">{stack.title}</span>
+								<span class="stack-cat" style={`color: ${stack.color}`}>{stack.title}</span>
 								<h3 class="stack-name">{stack.name}</h3>
 							</div>
 						</div>
@@ -235,13 +202,9 @@ const TECH_STACKS = [
 								<label>Best For</label>
 								<p>{stack.useCase}</p>
 							</div>
-							<div class="stack-info-group">
-								<label>When to Use</label>
-								<p>{stack.when}</p>
-							</div>
 						</div>
 					</div>
-				</div>
+				</a>
 			))}
 		</div>
 	</section>
@@ -803,6 +766,12 @@ const TECH_STACKS = [
 		border-top: 1px solid var(--border-color);
 	}
 
+	/* ── Tech Stacks Section ── */
+	.stacks-section {
+		padding: 80px 24px 100px;
+		border-top: 1px solid var(--border-color);
+	}
+
 	.stacks-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
@@ -814,13 +783,14 @@ const TECH_STACKS = [
 	}
 
 	.stack-card {
-		padding: 28px 24px;
+		padding: 24px;
 		background: var(--bg-color);
 		display: flex;
 		gap: 16px;
 		align-items: flex-start;
 		transition: background 0.2s;
 		border-left: 3px solid transparent;
+		text-decoration: none;
 	}
 
 	.stack-card:hover {
@@ -842,7 +812,7 @@ const TECH_STACKS = [
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		gap: 12px;
 	}
 
 	.stack-top {
@@ -857,15 +827,14 @@ const TECH_STACKS = [
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
-		color: var(--stack-color);
 		font-family: 'Outfit', monospace;
 	}
 
 	.stack-name {
-		font-size: 1.1rem;
+		font-size: 0.95rem;
 		font-weight: 700;
 		color: var(--text-primary);
-		margin-top: 4px;
+		margin-top: 2px;
 	}
 
 	.stack-tools {
@@ -885,11 +854,8 @@ const TECH_STACKS = [
 	}
 
 	.stack-details {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 20px;
-		padding-top: 12px;
-		border-top: 1px solid rgba(255,255,255,0.05);
+		display: block;
+		padding-top: 8px;
 	}
 
 	.stack-info-group label {
@@ -903,9 +869,9 @@ const TECH_STACKS = [
 	}
 
 	.stack-info-group p {
-		font-size: 0.8rem;
+		font-size: 0.82rem;
 		color: var(--text-secondary);
-		line-height: 1.5;
+		line-height: 1.6;
 	}
 
 	@media (max-width: 900px) {
@@ -920,10 +886,6 @@ const TECH_STACKS = [
 		.resource-handle,
 		.resource-focus {
 			display: none;
-		}
-		.stack-details {
-			grid-template-columns: 1fr;
-			gap: 16px;
 		}
 	}
 
