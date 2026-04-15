@@ -42,6 +42,7 @@ const categories = [
 ];
 
 import { TECH_STACKS } from '../data/stacks';
+import { LIFECYCLE_PHASES } from '../data/lifecycle';
 ---
 
 <Layout title="Home">
@@ -204,6 +205,36 @@ import { TECH_STACKS } from '../data/stacks';
 							</div>
 						</div>
 					</div>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<!-- ── THE ENGINEERING CORE ─────────────────── -->
+	<section class="lifecycle-section container">
+		<div class="section-header">
+			<div class="eyebrow">The Engineering Core</div>
+			<h2 class="section-title">The Development Lifecycle</h2>
+			<p class="section-sub">A modular overview of the 6 non-negotiable phases of professional engineering.</p>
+		</div>
+
+		<div class="lifecycle-matrix">
+			{LIFECYCLE_PHASES.map((phase) => (
+				<a href={`/lifecycle#phase-${phase.id}`} class="lifecycle-col" style={`--phase-color: ${phase.color}`}>
+					<div class="col-num">{phase.id}</div>
+					<div class="col-icon">{phase.icon}</div>
+					<h3 class="col-title">{phase.title}</h3>
+					<div class="col-divider"></div>
+					<div class="col-meta">
+						<label>Deliverable</label>
+						<span>{phase.deliverable}</span>
+					</div>
+					<div class="col-steps">
+						{phase.steps.slice(0, 2).map(step => (
+							<div class="mini-step">{step}</div>
+						))}
+					</div>
+					<div class="col-footer">Explain Phase →</div>
 				</a>
 			))}
 		</div>
@@ -874,7 +905,158 @@ import { TECH_STACKS } from '../data/stacks';
 		line-height: 1.6;
 	}
 
+	/* ── Engineering Lifecycle Matrix ── */
+	.lifecycle-section {
+		padding: 100px 24px;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.lifecycle-matrix {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 1px;
+		background: var(--border-color);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.lifecycle-col {
+		padding: 32px 20px;
+		background: var(--bg-color);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		transition: all 0.3s ease;
+		text-decoration: none;
+		border-top: 3px solid transparent;
+		position: relative;
+	}
+
+	.lifecycle-col:hover {
+		background: rgba(255,255,255,0.02);
+		border-top-color: var(--phase-color);
+		transform: translateY(-4px);
+		z-index: 2;
+		box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+	}
+
+	.col-num {
+		font-size: 0.7rem;
+		font-weight: 800;
+		color: var(--text-muted);
+		font-family: 'Outfit', monospace;
+		margin-bottom: 12px;
+		opacity: 0.5;
+	}
+
+	.col-icon {
+		font-size: 2rem;
+		margin-bottom: 20px;
+		transition: transform 0.3s ease;
+	}
+
+	.lifecycle-col:hover .col-icon {
+		transform: scale(1.1) rotate(5deg);
+	}
+
+	.col-title {
+		font-size: 0.9rem;
+		font-weight: 700;
+		color: var(--text-primary);
+		margin-bottom: 16px;
+		height: 2.2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.col-divider {
+		width: 20px;
+		height: 1px;
+		background: var(--phase-color);
+		margin-bottom: 16px;
+		opacity: 0.6;
+	}
+
+	.col-meta {
+		margin-bottom: 20px;
+		width: 100%;
+	}
+
+	.col-meta label {
+		font-size: 0.6rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		display: block;
+		margin-bottom: 4px;
+		letter-spacing: 1px;
+	}
+
+	.col-meta span {
+		font-size: 0.75rem;
+		color: var(--text-secondary);
+		display: block;
+		line-height: 1.3;
+	}
+
+	.col-steps {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		flex: 1;
+		width: 100%;
+		margin-bottom: 24px;
+	}
+
+	.mini-step {
+		font-size: 0.65rem;
+		color: var(--text-muted);
+		padding: 4px 8px;
+		background: rgba(255,255,255,0.03);
+		border-radius: 4px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.col-footer {
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: var(--phase-color);
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.lifecycle-col:hover .col-footer {
+		opacity: 1;
+	}
+
+	@media (max-width: 1100px) {
+		.lifecycle-matrix {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	@media (max-width: 768px) {
+		.lifecycle-matrix {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 500px) {
+		.lifecycle-matrix {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	@media (max-width: 900px) {
+... (rest of the media query remains)
+
 		.roadmap-grid,
 		.courses-grid,
 		.stacks-grid {
@@ -890,4 +1072,3 @@ import { TECH_STACKS } from '../data/stacks';
 	}
 
 </style>
-

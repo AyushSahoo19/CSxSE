@@ -1,0 +1,343 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { LIFECYCLE_PHASES } from '../data/lifecycle';
+---
+
+<Layout title="The Engineering Lifecycle | Handbook">
+  <div class="lifecycle-page">
+    <div class="container hero-mini">
+      <div class="header-blueprint">
+        <div class="eyebrow">The Engineering Core</div>
+        <h1 class="page-title">The Engineering Lifecycle</h1>
+        <p class="page-subtitle">A veteran's handbook on the six non-negotiable phases of professional system development.</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="philosophy-card">
+        <div class="card-icon">§</div>
+        <div class="card-content">
+          <h3>The Philosophy of Process</h3>
+          <p>Over 60 years in the field has taught me one absolute truth: software is not "written"—it is "engineered." A process is not a cage; it is the scaffolding that prevents the structure from collapsing. Failure usually happens at the seams of these phases, not within the code itself.</p>
+        </div>
+      </div>
+
+      <div class="phases-handbook">
+        {LIFECYCLE_PHASES.map((phase) => (
+          <section id={`phase-${phase.id}`} class="phase-chapter" style={`--phase-color: ${phase.color}`}>
+            <div class="chapter-sidebar">
+              <div class="chapter-id">{phase.id}</div>
+              <div class="chapter-icon">{phase.icon}</div>
+              <div class="chapter-meta">
+                <label>Deliverable</label>
+                <strong>{phase.deliverable}</strong>
+              </div>
+            </div>
+            
+            <div class="chapter-content">
+              <header class="chapter-header">
+                <h2 class="chapter-title">{phase.title}</h2>
+                <p class="chapter-tagline">{phase.tagline}</p>
+              </header>
+
+              <div class="chapter-body">
+                <div class="chapter-text">
+                  <p>{phase.description}</p>
+                </div>
+
+                <div class="wisdom-inset">
+                  <p>"{phase.wisdom}"</p>
+                </div>
+
+                <div class="task-grid">
+                  <div class="task-box">
+                    <h4>Core Execution Steps</h4>
+                    <ul>
+                      {phase.steps.map(step => <li>{step}</li>)}
+                    </ul>
+                  </div>
+
+                  <div class="task-box pitfalls">
+                    <h4>Architectural Pitfalls</h4>
+                    <ul>
+                      {phase.mistakes.map(mistake => <li>{mistake}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <div class="handbook-footer">
+        <div class="conclusion-box">
+          <h3>The Final Word</h3>
+          <p>The best architecture is the one that allows you to change your mind later. Follow the process not for the sake of rules, but for the sake of survival in a world of shifting requirements. Code well, but engineer better.</p>
+          <a href="/dictionary" class="btn btn-primary">Begin Curriculum</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .lifecycle-page {
+    padding: 80px 0 100px;
+  }
+
+  .hero-mini {
+    text-align: center;
+    max-width: 800px;
+    margin-bottom: 80px;
+  }
+
+  .header-blueprint {
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin: 16px 0;
+    line-height: 1;
+  }
+
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .philosophy-card {
+    display: flex;
+    gap: 40px;
+    background: rgba(99, 102, 241, 0.03);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    padding: 40px;
+    border-radius: 16px;
+    margin-bottom: 100px;
+    align-items: flex-start;
+  }
+
+  .card-icon {
+    font-size: 4rem;
+    font-family: 'Outfit', serif;
+    color: var(--accent-color);
+    line-height: 1;
+    opacity: 0.4;
+  }
+
+  .card-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+  }
+
+  .card-content p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  .phases-handbook {
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+  }
+
+  .phase-chapter {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 80px;
+    scroll-margin-top: 100px;
+  }
+
+  .chapter-sidebar {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .chapter-id {
+    font-size: 8rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    line-height: 0.8;
+    font-family: 'Outfit', sans-serif;
+    margin-left: -20px;
+  }
+
+  .chapter-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+
+  .chapter-meta label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--phase-color);
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .chapter-meta strong {
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    display: block;
+  }
+
+  .chapter-header {
+    margin-bottom: 40px;
+  }
+
+  .chapter-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+
+  .chapter-tagline {
+    font-size: 1.25rem;
+    color: var(--phase-color);
+    font-family: 'Outfit', serif;
+    font-style: italic;
+  }
+
+  .chapter-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .wisdom-inset {
+    padding: 32px;
+    background: rgba(255,255,255,0.02);
+    border-left: 4px solid var(--phase-color);
+    margin-bottom: 48px;
+    border-radius: 0 12px 12px 0;
+  }
+
+  .wisdom-inset p {
+    font-family: 'Outfit', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .task-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .task-box h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .task-box ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .task-box li {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 24px;
+  }
+
+  .task-box li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--phase-color);
+    font-weight: 700;
+  }
+
+  .pitfalls h4 {
+    color: #fca5a5;
+    border-bottom-color: rgba(239, 68, 68, 0.15);
+  }
+
+  .pitfalls li::before {
+    content: '✖';
+    color: #ef4444;
+  }
+
+  .handbook-footer {
+    padding: 120px 0;
+    text-align: center;
+  }
+
+  .conclusion-box {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.02), transparent);
+    border: 1px solid var(--border-color);
+    border-radius: 32px;
+  }
+
+  .conclusion-box h3 {
+    font-size: 1.75rem;
+    margin-bottom: 24px;
+  }
+
+  .conclusion-box p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 1000px) {
+    .phase-chapter {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .chapter-sidebar {
+      position: static;
+      flex-direction: row;
+      align-items: center;
+      gap: 32px;
+    }
+    .chapter-id {
+      font-size: 4rem;
+      margin-bottom: 0px;
+    }
+    .task-grid {
+      grid-template-columns: 1fr;
+    }
+    .philosophy-card {
+      flex-direction: column;
+      gap: 24px;
+    }
+    .page-title {
+      font-size: 2.5rem;
+    }
+  }
+</style>
