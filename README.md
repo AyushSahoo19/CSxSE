@@ -1,43 +1,47 @@
-# Astro Starter Kit: Minimal
+# [ > ] CSxSE Dictionary
 
-```sh
-npm create astro@latest -- --template minimal
-```
+A premium, curated dictionary and curriculum for Computer Science and Software Engineering. Built with Astro 6, this platform provides a structured, phase-based mastery path for engineers at all levels.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🚀 Features
 
-## 🚀 Project Structure
+- **Mastery Sequence**: A pedagogical path from fundamentals to expert-level architecture.
+- **380+ Terms**: Deeply explained concepts with real-world examples.
+- **Curriculum Phases**: 6 progressive phases to guide your learning journey.
+- **Resource Hub**: Hand-picked YouTube channels and courses for further study.
+- **Minimalist Design**: A high-performance, dark-themed editorial UI.
 
-Inside of your Astro project, you'll see the following folders and files:
+## 📁 Project Structure
 
 ```text
 /
-├── public/
+├── public/          # Static assets (logos, icons)
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── content/     # Markdown definitions (The Dictionary)
+│   ├── layouts/     # Base UI layouts
+│   ├── pages/       # Application routing (Phases, Domains, etc.)
+│   └── styles/      # Global Design System
+├── scripts/         # Maintenance & automation tools
+├── package.json     # Dependencies & Scripts
+└── astro.config.mjs # Framework configuration
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+##  Genie Commands
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+All commands are run from the root of the project:
 
-Any static assets, like images, can be placed in the `public/` directory.
+| Command           | Action                                       |
+| :---------------- | :------------------------------------------- |
+| `npm install`     | Installs dependencies                        |
+| `npm run dev`     | Starts local dev server at `localhost:4321`  |
+| `npm run build`   | Build your production site to `./dist/`      |
+| `npm run preview` | Preview your build locally                   |
 
-## 🧞 Commands
+## 🛠 Maintenance
 
-All commands are run from the root of the project, from a terminal:
+The `scripts/` directory contains tools to manage your dictionary:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- `add_missing_terms.js`: Batch add new terms to the collection.
+- `check_cats.js`: Validate category taxonomy across all files.
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+---
+*Built with passion for the engineering community.*
