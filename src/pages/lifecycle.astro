@@ -27,7 +27,6 @@ import { LIFECYCLE_PHASES } from '../data/lifecycle';
           <section id={`phase-${phase.id}`} class="phase-chapter" style={`--phase-color: ${phase.color}`}>
             <div class="chapter-sidebar">
               <div class="chapter-id">{phase.id}</div>
-              <div class="chapter-icon">{phase.icon}</div>
               <div class="chapter-meta">
                 <label>Deliverable</label>
                 <strong>{phase.deliverable}</strong>
@@ -174,11 +173,6 @@ import { LIFECYCLE_PHASES } from '../data/lifecycle';
     line-height: 0.8;
     font-family: 'Outfit', sans-serif;
     margin-left: -20px;
-  }
-
-  .chapter-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
   }
 
   .chapter-meta label {

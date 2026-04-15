@@ -222,7 +222,6 @@ import { LIFECYCLE_PHASES } from '../data/lifecycle';
 			{LIFECYCLE_PHASES.map((phase) => (
 				<a href={`/lifecycle#phase-${phase.id}`} class="lifecycle-col" style={`--phase-color: ${phase.color}`}>
 					<div class="col-num">{phase.id}</div>
-					<div class="col-icon">{phase.icon}</div>
 					<h3 class="col-title">{phase.title}</h3>
 					<div class="col-divider"></div>
 					<div class="col-meta">
@@ -947,18 +946,8 @@ import { LIFECYCLE_PHASES } from '../data/lifecycle';
 		font-weight: 800;
 		color: var(--text-muted);
 		font-family: 'Outfit', monospace;
-		margin-bottom: 12px;
+		margin-bottom: 4px;
 		opacity: 0.5;
-	}
-
-	.col-icon {
-		font-size: 2rem;
-		margin-bottom: 20px;
-		transition: transform 0.3s ease;
-	}
-
-	.lifecycle-col:hover .col-icon {
-		transform: scale(1.1) rotate(5deg);
 	}
 
 	.col-title {
